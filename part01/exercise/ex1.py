@@ -63,13 +63,12 @@ class Interpreter(object):
         # and return the INTEGER token
         if current_char.isdigit():
             value = 0
-            current_char = text[self.pos]
-            while current_char.isdigit():
-                value        = value * 10 + int(current_char)
-                self.pos    += 1
-                if self.pos >= len(text):
-                    break
+            while True:
                 current_char = text[self.pos]
+                value = value * 10 + int(current_char)
+                self.pos += 1
+                if self.pos >= len(text) or not text[self.pos].isdigit():
+                    break
             token = Token(INTEGER, value)
             return token
 
