@@ -36,6 +36,12 @@ Token Lexer::get_next_token() {
         } else if (text[pos] == '/') {
             ++pos;
             return Token::DIV;
+        } else if (text[pos] == '+') {
+            ++pos;
+            return Token::ADD;
+        } else if (text[pos] == '-') {
+            ++pos;
+            return Token::MINUS;
         } else
             error();
     }
@@ -75,6 +81,21 @@ int Interpreter::expr() {
     return value;
 }
 
+int Interpreter::item() {
+    int value = expr();
+
+    while (cur_token == Token::ADD || cur_token == Token::MINUS) {
+        if (cur_token == Token::ADD) {
+            eat(Token::ADD);
+            value += expr();
+        } else if (cur_token == Token::MINUS) {
+            eat(Token::MINUS);
+            value -= expr();
+        }
+    }
+    return value;
+}
+
 int Interpreter::parse() {
-    return expr();
+    return item();
 }
