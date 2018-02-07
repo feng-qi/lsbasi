@@ -206,17 +206,10 @@ class LISPNotation(NodeVisitor):
         self.parser = parser
 
     def visit_BinOp(self, node):
-        if node.op.type == PLUS:
-            return '(' + ' '.join(['+', self.visit(node.left), self.visit(node.right)]) + ')'
-        elif node.op.type == MINUS:
-            return '(' + ' '.join(['-', self.visit(node.left), self.visit(node.right)]) + ')'
-        elif node.op.type == MUL:
-            return '(' + ' '.join(['*', self.visit(node.left), self.visit(node.right)]) + ')'
-        elif node.op.type == DIV:
-            return '(' + ' '.join(['/', self.visit(node.left), self.visit(node.right)]) + ')'
+        return f'({node.op.value} {self.visit(node.left)} {self.visit(node.right)})'
 
     def visit_Num(self, node):
-        return str(node.value)
+        return node.value
 
     def getLISP(self):
         return self.visit(self.parser.parse())
@@ -231,8 +224,8 @@ def main():
 
         if len(text.strip()):
             parser = Parser(Lexer(text))
-            rpn = LISPNotation(parser)
-            result = rpn.getLISP()
+            lisp = LISPNotation(parser)
+            result = lisp.getLISP()
             print(result)
 
 if __name__ == '__main__':

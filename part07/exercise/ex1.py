@@ -206,17 +206,18 @@ class ReversePolishNotation(NodeVisitor):
         self.parser = parser
 
     def visit_BinOp(self, node):
-        if node.op.type == PLUS:
-            return ' '.join([self.visit(node.left), self.visit(node.right), '+'])
-        elif node.op.type == MINUS:
-            return ' '.join([self.visit(node.left), self.visit(node.right), '-'])
-        elif node.op.type == MUL:
-            return ' '.join([self.visit(node.left), self.visit(node.right), '*'])
-        elif node.op.type == DIV:
-            return ' '.join([self.visit(node.left), self.visit(node.right), '/'])
+        return f'{self.visit(node.left)} {self.visit(node.right)} {node.op.value}'
+        # if node.op.type == PLUS:
+        #     return ' '.join([self.visit(node.left), self.visit(node.right), '+'])
+        # elif node.op.type == MINUS:
+        #     return ' '.join([self.visit(node.left), self.visit(node.right), '-'])
+        # elif node.op.type == MUL:
+        #     return ' '.join([self.visit(node.left), self.visit(node.right), '*'])
+        # elif node.op.type == DIV:
+        #     return ' '.join([self.visit(node.left), self.visit(node.right), '/'])
 
     def visit_Num(self, node):
-        return str(node.value)
+        return node.value
 
     def getRPN(self):
         return self.visit(self.parser.parse())
