@@ -79,11 +79,11 @@ double Lexer::number() {
 }
 
 // Parser ----------------------------------------------------
-AST* Parser::factor() {
+std::shared_ptr<AST> Parser::factor() {
     Token token = cur_token;
-    AST* node = nullptr;
+    std::shared_ptr<AST> node;
     if (token == Token::NUM) {
-        node = new AST{Token::NUM, lexer.dvalue, nullptr, nullptr};
+        node = std::make_shared<AST>(Token::NUM, lexer.dvalue, nullptr, nullptr);
         eat(Token::NUM);
     } else if (cur_token == Token::LPAREN) {
         eat(Token::LPAREN);
@@ -93,37 +93,41 @@ AST* Parser::factor() {
     return node;
 }
 
-AST* Parser::term() {
-    AST* node = factor();
+std::shared_ptr<AST> Parser::term() {
+    std::shared_ptr<AST> node = factor();
 
     while (cur_token == Token::MUL || cur_token == Token::DIV) {
         if (cur_token == Token::MUL) {
             eat(Token::MUL);
-            node = new AST(Token::MUL, 0, node, factor());
+            // node = new AST(Token::MUL, 0, node, factor());
+            node = std::make_shared<AST>(Token::MUL, 0, node, factor());
         } else if (cur_token == Token::DIV) {
             eat(Token::DIV);
-            node = new AST(Token::DIV, 0, node, factor());
+            // node = new AST(Token::DIV, 0, node, factor());
+            node = std::make_shared<AST>(Token::DIV, 0, node, factor());
         }
     }
     return node;
 }
 
-AST* Parser::expr() {
-    AST* node = term();
+std::shared_ptr<AST> Parser::expr() {
+    std::shared_ptr<AST> node = term();
 
     while (cur_token == Token::PLUS || cur_token == Token::MINUS) {
         if (cur_token == Token::PLUS) {
             eat(Token::PLUS);
-            node = new AST(Token::PLUS, 0, node, term());
+            // node = new AST(Token::PLUS, 0, node, term());
+            node = std::make_shared<AST>(Token::PLUS, 0, node, term());
         } else if (cur_token == Token::MINUS) {
             eat(Token::MINUS);
-            node = new AST(Token::MINUS, 0, node, term());
+            // node = new AST(Token::MINUS, 0, node, term());
+            node = std::make_shared<AST>(Token::MINUS, 0, node, term());
         }
     }
     return node;
 }
 
-AST* Parser::parse() {
+std::shared_ptr<AST> Parser::parse() {
     return expr();
 }
 
@@ -135,7 +139,7 @@ void Parser::eat(Token token) {
 }
 
 // Interpreter ----------------------------------------------------
-double Interpreter::visit(AST *node) {
+double Interpreter::visit(std::shared_ptr<AST> node) {
     switch (node->token) {
     case Token::NUM:
         return visit_num(node);
@@ -153,11 +157,11 @@ double Interpreter::visit(AST *node) {
     return 0;
 }
 
-double Interpreter::visit_num(AST *node) {
+double Interpreter::visit_num(std::shared_ptr<AST> node) {
     return node->dvalue;
 }
 
-double Interpreter::visit_op(AST *node) {
+double Interpreter::visit_op(std::shared_ptr<AST> node) {
     switch (node->token) {
     case Token::PLUS:
         return visit(node->left) + visit(node->right);

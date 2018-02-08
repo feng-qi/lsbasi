@@ -26,20 +26,21 @@ private:
 };
 
 struct AST {
-    AST(Token t, double d, AST* l, AST* r) : token(t), dvalue(d), left(l), right(r) {}
+    AST(Token t, double d, std::shared_ptr<AST> l, std::shared_ptr<AST> r)
+        : token(t), dvalue(d), left(l), right(r) {}
     Token token;
     double dvalue;
-    AST* left;
-    AST* right;
+    std::shared_ptr<AST> left;
+    std::shared_ptr<AST> right;
 };
 
 class Parser {
 public:
     Parser(Lexer _lexer): lexer(_lexer) { cur_token = lexer.get_next_token(); }
-    AST* factor();
-    AST* term();
-    AST* expr();
-    AST* parse();
+    std::shared_ptr<AST> factor();
+    std::shared_ptr<AST> term();
+    std::shared_ptr<AST> expr();
+    std::shared_ptr<AST> parse();
 
 private:
     void error() { throw std::runtime_error("Invalid syntax"); }
@@ -53,12 +54,13 @@ class Interpreter {
 public:
     Interpreter(Parser _parser) : parser(_parser) {}
     double interpret();
+    void reload(Parser _parser) { parser = _parser; }  // for test convenience
 
 private:
     void error() { throw std::runtime_error("Invalid AST"); }
-    double visit(AST* node);
-    double visit_num(AST* node);
-    double visit_op(AST* node);
+    double visit(std::shared_ptr<AST> node);
+    double visit_num(std::shared_ptr<AST> node);
+    double visit_op(std::shared_ptr<AST> node);
 
     Parser parser;
 };
