@@ -1,0 +1,9 @@
+BEGIN
+
+    BEGIN
+        _number := 2;
+        a := _NumBer;
+        B := a div 2;
+    end;
+
+END.
